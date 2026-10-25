@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Tracker — StudentHub</title>
+  <meta name="description" content="Track college course attendance, calculate skip limits, and calculate recovery targets to prevent debarment.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Sticky Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo-icon">🎓</span>
+        <span>StudentHub</span>
+      </a>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html" class="nav-link">Dashboard</a></li>
+        <li><a href="planner.html" class="nav-link">Planner</a></li>
+        <li><a href="budget.html" class="nav-link">Budget</a></li>
+        <li><a href="attendance.html" class="nav-link active">Attendance</a></li>
+        <li><a href="todo.html" class="nav-link">To-Do</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">🌙</button>
+        <button id="hamburgerBtn" class="hamburger-btn" aria-label="Toggle Menu" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="container">
+    <div class="page-header">
+      <h1 class="page-title">Course Attendance Tracker ✅</h1>
+      <p class="page-subtitle">Mark daily classes, track percentage cutoffs, and view smart skip or recovery advice.</p>
+    </div>
+
+    <!-- Overall Attendance Metric Header Card -->
+    <section class="card" style="margin-bottom: 24px;" aria-label="Overall Attendance">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <div class="card-label">Aggregate Attendance Across All Courses</div>
+          <div class="card-number" id="overallAttendancePct" style="margin-top: 4px;">0%</div>
+          <div class="card-label" id="overallAttendanceStats">0 of 0 total classes attended</div>
+        </div>
+        <div id="overallStatusBadgeContainer">
+          <span class="badge badge-primary">No courses yet</span>
+        </div>
+      </div>
+      <div class="progress" style="margin-top: 14px;">
+        <div id="overallAttendanceFill" class="progress-fill fill-success" style="width: 0%;"></div>
+      </div>
+    </section>
+
+    <!-- Two-column layout: Add Subject Form left, Subject Attendance Cards right -->
+    <div class="two-col">
+
+      <!-- Left Column: Add Course Form -->
+      <section class="card" aria-label="Add Course">
+        <h2 class="card-title">Add Course</h2>
+        <form id="addAttendanceSubjectForm" novalidate>
+          <div class="form-group">
+            <label for="attSubjectName" class="form-label">Course Name *</label>
+            <input type="text" id="attSubjectName" class="input" placeholder="e.g. Engineering Physics" maxlength="60" required>
+            <div class="field-error" id="attSubjectNameError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="attRequiredPct" class="form-label">Required Attendance Cutoff (%) *</label>
+            <input type="number" id="attRequiredPct" class="input" value="75" min="1" max="99" required>
+            <div class="field-error" id="attRequiredPctError"></div>
+            <span style="font-size: 0.8rem; color: var(--muted); margin-top: 4px; display: block;">Standard college threshold is 75%</span>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            <span>➕</span> Track Course
+          </button>
+        </form>
+      </section>
+
+      <!-- Right Column: Course Cards with Mark buttons & smart hints -->
+      <section id="attendanceCardsContainer" class="item-list" aria-label="Course Attendance List">
+        <!-- Rendered dynamically by attendance.js -->
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Modal: Edit Course Details -->
+  <div class="modal-backdrop" id="editAttendanceModal" role="dialog" aria-modal="true" aria-labelledby="editAttendanceModalTitle">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="editAttendanceModalTitle">✏️ Edit Course</h3>
+        <button class="modal-close" id="closeEditAttModalBtn" aria-label="Close modal">✕</button>
+      </div>
+      <form id="editAttendanceForm" novalidate>
+        <input type="hidden" id="editAttId">
+        <div class="form-group">
+          <label for="editAttName" class="form-label">Course Name *</label>
+          <input type="text" id="editAttName" class="input" maxlength="60" required>
+          <div class="field-error" id="editAttNameError"></div>
+        </div>
+        <div class="form-group">
+          <label for="editAttRequiredPct" class="form-label">Required Cutoff (%) *</label>
+          <input type="number" id="editAttRequiredPct" class="input" min="1" max="99" required>
+          <div class="field-error" id="editAttRequiredPctError"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelEditAttBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Correct Counts (For students who already have prior attendance) -->
+  <div class="modal-backdrop" id="correctCountsModal" role="dialog" aria-modal="true" aria-labelledby="correctCountsModalTitle">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="correctCountsModalTitle">⚙️ Correct Attendance Counts</h3>
+        <button class="modal-close" id="closeCorrectCountsModalBtn" aria-label="Close modal">✕</button>
+      </div>
+      <form id="correctCountsForm" novalidate>
+        <input type="hidden" id="correctCourseId">
+        <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 14px;">
+          Manually adjust your attended and total class counts to reflect your existing college records.
+        </p>
+        <div class="form-group">
+          <label for="correctPresentInput" class="form-label">Classes Attended (Present) *</label>
+          <input type="number" id="correctPresentInput" class="input" min="0" required>
+          <div class="field-error" id="correctPresentInputError"></div>
+        </div>
+        <div class="form-group">
+          <label for="correctTotalInput" class="form-label">Total Classes Conducted *</label>
+          <input type="number" id="correctTotalInput" class="input" min="0" required>
+          <div class="field-error" id="correctTotalInputError"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelCorrectCountsBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Counts</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>Built by StudentHub Team | HTML, CSS, JavaScript</p>
+    </div>
+  </footer>
+
+  <!-- Scripts in required order -->
+  <script src="js/storage.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/attendance.js"></script>
+</body>
+</html>

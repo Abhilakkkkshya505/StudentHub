@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam Planner — StudentHub</title>
+  <meta name="description" content="Manage your subjects, syllabus topics, and auto-generate daily study plans before exams.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Sticky Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo-icon">🎓</span>
+        <span>StudentHub</span>
+      </a>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html" class="nav-link">Dashboard</a></li>
+        <li><a href="planner.html" class="nav-link active">Planner</a></li>
+        <li><a href="budget.html" class="nav-link">Budget</a></li>
+        <li><a href="attendance.html" class="nav-link">Attendance</a></li>
+        <li><a href="todo.html" class="nav-link">To-Do</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">🌙</button>
+        <button id="hamburgerBtn" class="hamburger-btn" aria-label="Toggle Menu" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="container">
+    <div class="page-header">
+      <h1 class="page-title">Exam Planner &amp; Study Schedule 📚</h1>
+      <p class="page-subtitle">Add subjects, track syllabus completion, and auto-distribute topics evenly over remaining days.</p>
+    </div>
+
+    <!-- Two-column layout: Form left, Subjects and plans right -->
+    <div class="two-col">
+
+      <!-- Left Column: Add Subject Form -->
+      <section class="card" aria-label="Add Subject">
+        <h2 class="card-title">Add New Subject</h2>
+        <form id="addSubjectForm" novalidate>
+          <div class="form-group">
+            <label for="subjectName" class="form-label">Subject Name *</label>
+            <input type="text" id="subjectName" class="input" placeholder="e.g. Data Structures & Algorithms" maxlength="60" required>
+            <div class="field-error" id="subjectNameError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="examDate" class="form-label">Exam Date *</label>
+            <input type="date" id="examDate" class="input" required>
+            <div class="field-error" id="examDateError"></div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            <span>➕</span> Add Subject
+          </button>
+        </form>
+      </section>
+
+      <!-- Right Column: Subjects List & Study Plans -->
+      <div>
+        <div class="filter-bar" style="justify-content: space-between;">
+          <h2 style="font-size: 1.15rem; font-weight: 600;">Enrolled Subjects</h2>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="subjectSortSelect" style="font-size: 0.85rem; color: var(--muted);">Sort by:</label>
+            <select id="subjectSortSelect" class="select" style="min-height: 34px; padding: 4px 10px; width: auto; font-size: 0.85rem;">
+              <option value="nearest">Nearest Exam First</option>
+              <option value="alpha">Alphabetical (A-Z)</option>
+            </select>
+          </div>
+        </div>
+
+        <section id="subjectsContainer" class="item-list" aria-label="Subjects List">
+          <!-- Rendered dynamically by planner.js -->
+        </section>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal: Edit Subject -->
+  <div class="modal-backdrop" id="editSubjectModal" role="dialog" aria-modal="true" aria-labelledby="editSubjectModalTitle">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="editSubjectModalTitle">✏️ Edit Subject</h3>
+        <button class="modal-close" id="closeEditSubjectModalBtn" aria-label="Close modal">✕</button>
+      </div>
+      <form id="editSubjectForm" novalidate>
+        <input type="hidden" id="editSubjectId">
+        <div class="form-group">
+          <label for="editSubjectName" class="form-label">Subject Name *</label>
+          <input type="text" id="editSubjectName" class="input" maxlength="60" required>
+          <div class="field-error" id="editSubjectNameError"></div>
+        </div>
+        <div class="form-group">
+          <label for="editExamDate" class="form-label">Exam Date *</label>
+          <input type="date" id="editExamDate" class="input" required>
+          <div class="field-error" id="editExamDateError"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelEditSubjectBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Edit Topic -->
+  <div class="modal-backdrop" id="editTopicModal" role="dialog" aria-modal="true" aria-labelledby="editTopicModalTitle">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="editTopicModalTitle">✏️ Edit Topic Name</h3>
+        <button class="modal-close" id="closeEditTopicModalBtn" aria-label="Close modal">✕</button>
+      </div>
+      <form id="editTopicForm" novalidate>
+        <input type="hidden" id="editTopicSubId">
+        <input type="hidden" id="editTopicId">
+        <div class="form-group">
+          <label for="editTopicTitle" class="form-label">Topic Title *</label>
+          <input type="text" id="editTopicTitle" class="input" maxlength="80" required>
+          <div class="field-error" id="editTopicTitleError"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelEditTopicBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>Built by StudentHub Team | HTML, CSS, JavaScript</p>
+    </div>
+  </footer>
+
+  <!-- Scripts in required order -->
+  <script src="js/storage.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/planner.js"></script>
+</body>
+</html>

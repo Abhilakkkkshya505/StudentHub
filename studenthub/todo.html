@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do &amp; Pomodoro — StudentHub</title>
+  <meta name="description" content="Prioritize student tasks, track due dates, and boost study sessions with an integrated Pomodoro timer.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Sticky Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo-icon">🎓</span>
+        <span>StudentHub</span>
+      </a>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html" class="nav-link">Dashboard</a></li>
+        <li><a href="planner.html" class="nav-link">Planner</a></li>
+        <li><a href="budget.html" class="nav-link">Budget</a></li>
+        <li><a href="attendance.html" class="nav-link">Attendance</a></li>
+        <li><a href="todo.html" class="nav-link active">To-Do</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">🌙</button>
+        <button id="hamburgerBtn" class="hamburger-btn" aria-label="Toggle Menu" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="container">
+    <div class="page-header">
+      <h1 class="page-title">Tasks &amp; Pomodoro Study Timer ⏱️</h1>
+      <p class="page-subtitle">Prioritize assignments, manage deadlines, and focus with structured study intervals.</p>
+    </div>
+
+    <!-- Two-column layout: Left column Pomodoro + Add Task, Right column Task List -->
+    <div class="two-col">
+
+      <!-- Left Column: Pomodoro Timer & Add Task Form -->
+      <div>
+
+        <!-- Pomodoro Study Timer Card -->
+        <section class="card" style="margin-bottom: 24px;" aria-label="Pomodoro Study Timer">
+          <div class="card-title">
+            <span>⏱️ Pomodoro Timer</span>
+            <span id="pomoSessionBadge" class="badge badge-primary">Focus Session</span>
+          </div>
+
+          <!-- Mode Selectors -->
+          <div class="btn-group" style="justify-content: center; margin-bottom: 12px;">
+            <button id="modeFocusBtn" class="btn btn-secondary btn-sm active-mode" style="background-color: var(--primary-soft); color: var(--primary);">
+              Focus (25m)
+            </button>
+            <button id="modeBreakBtn" class="btn btn-secondary btn-sm">
+              Break (5m)
+            </button>
+          </div>
+
+          <!-- Large Timer Display -->
+          <div id="pomodoroDisplay" class="pomodoroDisplay" style="font-family: var(--font-heading); font-size: 3.5rem; font-weight: 700; text-align: center; color: var(--text); margin: 12px 0; letter-spacing: 0.05em;">
+            25:00
+          </div>
+
+          <!-- CSS Progress Bar for Timer -->
+          <div class="progress" style="height: 10px; margin-bottom: 16px;">
+            <div id="pomoProgressFill" class="progress-fill fill-success" style="width: 100%;"></div>
+          </div>
+
+          <!-- Timer Controls -->
+          <div class="btn-group" style="justify-content: center;">
+            <button id="pomoStartBtn" class="btn btn-primary" style="min-width: 90px;">
+              <span>▶</span> Start
+            </button>
+            <button id="pomoPauseBtn" class="btn btn-secondary" style="min-width: 90px;" disabled>
+              <span>⏸</span> Pause
+            </button>
+            <button id="pomoResetBtn" class="btn btn-secondary" style="min-width: 90px;">
+              <span>🔄</span> Reset
+            </button>
+          </div>
+
+          <!-- Today's Pomodoro Count -->
+          <div style="text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 12px;">
+            Completed today: <strong id="pomoTodayCount" style="color: var(--text);">0</strong> sessions 🍅
+          </div>
+        </section>
+
+        <!-- Add Task Form Card -->
+        <section class="card" aria-label="Add Task">
+          <h2 class="card-title">Add New Task</h2>
+          <form id="addTaskForm" novalidate>
+            <div class="form-group">
+              <label for="taskText" class="form-label">Task Description *</label>
+              <input type="text" id="taskText" class="input" placeholder="e.g. Complete Discrete Maths Worksheet 3" maxlength="100" required>
+              <div class="char-counter"><span id="taskTextCharCount">0</span>/100</div>
+              <div class="field-error" id="taskTextError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="taskPriority" class="form-label">Priority *</label>
+              <select id="taskPriority" class="select" required>
+                <option value="High">🔴 High Priority</option>
+                <option value="Medium" selected>🟡 Medium Priority</option>
+                <option value="Low">🟢 Low Priority</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="taskDue" class="form-label">Due Date (optional)</label>
+              <input type="date" id="taskDue" class="input">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+              <span>➕</span> Add Task
+            </button>
+          </form>
+        </section>
+
+      </div>
+
+      <!-- Right Column: Task Manager & Filtered Lists -->
+      <section class="card" aria-label="Task Manager">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <h2 class="card-title" style="margin-bottom: 2px;">Task List</h2>
+            <div id="tasksSummaryText" style="font-size: 0.85rem; color: var(--muted);">0 pending, 0 done</div>
+          </div>
+
+          <button id="clearCompletedBtn" class="btn btn-secondary btn-sm" title="Remove all completed tasks">
+            Clear Completed
+          </button>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="filter-bar" style="margin-bottom: 12px;">
+          <input type="text" id="taskSearchInput" class="input search-input" placeholder="🔍 Search tasks..." style="font-size: 0.88rem; min-height: 36px; padding: 6px 12px;">
+          <select id="taskSortSelect" class="select" style="width: auto; min-height: 36px; font-size: 0.88rem; padding: 6px 10px;">
+            <option value="priority-date">Priority (High > Low), Earliest Due</option>
+            <option value="due-date">Due Date (Earliest First)</option>
+            <option value="alpha">Alphabetical (A-Z)</option>
+          </select>
+        </div>
+
+        <!-- Filter Buttons: All / Pending / Done -->
+        <div class="btn-group" style="margin-bottom: 16px;">
+          <button class="btn btn-secondary btn-sm filter-btn active-filter" data-filter="all" style="background-color: var(--primary-soft); color: var(--primary);">
+            All
+          </button>
+          <button class="btn btn-secondary btn-sm filter-btn" data-filter="pending">
+            Pending
+          </button>
+          <button class="btn btn-secondary btn-sm filter-btn" data-filter="done">
+            Done
+          </button>
+        </div>
+
+        <!-- Tasks Container -->
+        <div id="tasksListContainer" class="item-list">
+          <!-- Dynamically populated task items -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Modal: Edit Task -->
+  <div class="modal-backdrop" id="editTaskModal" role="dialog" aria-modal="true" aria-labelledby="editTaskModalTitle">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="editTaskModalTitle">✏️ Edit Task</h3>
+        <button class="modal-close" id="closeEditTaskModalBtn" aria-label="Close modal">✕</button>
+      </div>
+      <form id="editTaskForm" novalidate>
+        <input type="hidden" id="editTaskId">
+        <div class="form-group">
+          <label for="editTaskText" class="form-label">Task Description *</label>
+          <input type="text" id="editTaskText" class="input" maxlength="100" required>
+          <div class="field-error" id="editTaskTextError"></div>
+        </div>
+        <div class="form-group">
+          <label for="editTaskPriority" class="form-label">Priority *</label>
+          <select id="editTaskPriority" class="select" required>
+            <option value="High">🔴 High Priority</option>
+            <option value="Medium">🟡 Medium Priority</option>
+            <option value="Low">🟢 Low Priority</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editTaskDue" class="form-label">Due Date (optional)</label>
+          <input type="date" id="editTaskDue" class="input">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelEditTaskBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>Built by StudentHub Team | HTML, CSS, JavaScript</p>
+    </div>
+  </footer>
+
+  <!-- Scripts in required order -->
+  <script src="js/storage.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/todo.js"></script>
+</body>
+</html>

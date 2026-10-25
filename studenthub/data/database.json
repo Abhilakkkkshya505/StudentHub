@@ -1,0 +1,227 @@
+{
+  "subjects": [
+    {
+      "id": "id_mvnj0mlx_8v3ix",
+      "name": "Data Structures & Algorithms",
+      "examDate": "2026-10-27",
+      "topics": [
+        {
+          "id": "id_mvnj0mlx_ma7b1",
+          "title": "Binary Search Trees & AVL Trees",
+          "done": true
+        },
+        {
+          "id": "id_mvnj0mlx_0hhqw",
+          "title": "Graph Traversal (BFS & DFS)",
+          "done": true
+        },
+        {
+          "id": "id_mvnj0mlx_hkjrz",
+          "title": "Dijkstra and Prim Algorithms",
+          "done": false
+        },
+        {
+          "id": "id_mvnj0mlx_810p4",
+          "title": "Dynamic Programming: 0/1 Knapsack",
+          "done": false
+        },
+        {
+          "id": "id_mvnj0mlx_a5kwn",
+          "title": "NP-Completeness and Heuristics",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "id_mvnj0mlx_q1sbx",
+      "name": "Engineering Physics",
+      "examDate": "2026-11-02",
+      "topics": [
+        {
+          "id": "id_mvnj0mlx_0a0s4",
+          "title": "Quantum Mechanics & Wave Functions",
+          "done": true
+        },
+        {
+          "id": "id_mvnj0mlx_pam5s",
+          "title": "Interference and Diffraction",
+          "done": false
+        },
+        {
+          "id": "id_mvnj0mlx_uahc2",
+          "title": "Lasers and Fiber Optics",
+          "done": false
+        },
+        {
+          "id": "id_mvnj0mlx_pufye",
+          "title": "Superconductivity & Nanotechnology",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "id_mvnj0mlx_dmnba",
+      "name": "Discrete Mathematics",
+      "examDate": "2026-11-09",
+      "topics": [
+        {
+          "id": "id_mvnj0mlx_aeh5i",
+          "title": "Propositional & Predicate Logic",
+          "done": true
+        },
+        {
+          "id": "id_mvnj0mlx_d88d1",
+          "title": "Relations and Equivalence Sets",
+          "done": true
+        },
+        {
+          "id": "id_mvnj0mlx_ynguc",
+          "title": "Recurrence Relations & Generating Functions",
+          "done": false
+        }
+      ]
+    }
+  ],
+  "budget": {
+    "month": "2026-10",
+    "allowance": 6000,
+    "expenses": [
+      {
+        "id": "id_mvnj0mly_mklil",
+        "amount": 1650,
+        "category": "Food",
+        "date": "2026-10-15",
+        "note": "Hostel mess extras & canteen snacks"
+      },
+      {
+        "id": "id_mvnj0mly_d0pe6",
+        "amount": 850,
+        "category": "Travel",
+        "date": "2026-10-18",
+        "note": "Metro card top-up & auto fare"
+      },
+      {
+        "id": "id_mvnj0mly_o5lfi",
+        "amount": 699,
+        "category": "Recharge",
+        "date": "2026-10-20",
+        "note": "Monthly 5G mobile data recharge"
+      },
+      {
+        "id": "id_mvnj0mly_hfbl5",
+        "amount": 550,
+        "category": "Study",
+        "date": "2026-10-22",
+        "note": "DSA notebook & scientific calculator batteries"
+      },
+      {
+        "id": "id_mvnj0mly_nd5zd",
+        "amount": 1050,
+        "category": "Fun",
+        "date": "2026-10-23",
+        "note": "Weekend movie & dinner with wingmates"
+      },
+      {
+        "id": "id_mvnj0mly_8zxl7",
+        "amount": 300,
+        "category": "Other",
+        "date": "2026-10-24",
+        "note": "Dorm laundry detergent & stationery"
+      }
+    ],
+    "history": [
+      {
+        "month": "2026-09",
+        "allowance": 6000,
+        "spent": 5400
+      }
+    ]
+  },
+  "attendance": [
+    {
+      "id": "id_mvnj0mly_d4l45",
+      "name": "Data Structures & Algorithms",
+      "required": 75,
+      "present": 22,
+      "total": 25,
+      "lastMarked": "2026-10-25",
+      "lastAction": "present"
+    },
+    {
+      "id": "id_mvnj0mly_r1b2f",
+      "name": "Engineering Physics",
+      "required": 75,
+      "present": 13,
+      "total": 21,
+      "lastMarked": "2026-10-25",
+      "lastAction": "absent"
+    },
+    {
+      "id": "id_mvnj0mly_dmch5",
+      "name": "Discrete Mathematics",
+      "required": 75,
+      "present": 18,
+      "total": 24,
+      "lastMarked": "2026-10-25",
+      "lastAction": "present"
+    },
+    {
+      "id": "id_mvnj0mly_pq313",
+      "name": "Technical Communication",
+      "required": 75,
+      "present": 16,
+      "total": 18,
+      "lastMarked": "2026-10-25",
+      "lastAction": "present"
+    }
+  ],
+  "todos": [
+    {
+      "id": "id_mvnj0mly_1ttxk",
+      "text": "Submit DSA Lab Assignment 3 (Graph Traversal)",
+      "priority": "High",
+      "due": "2026-10-24",
+      "done": false
+    },
+    {
+      "id": "id_mvnj0mly_p83vv",
+      "text": "Revise Dynamic Programming Notes before Thursday",
+      "priority": "High",
+      "due": "2026-10-26",
+      "done": false
+    },
+    {
+      "id": "id_mvnj0mly_tt5rw",
+      "text": "Physics practical journal completion & signature",
+      "priority": "Medium",
+      "due": "2026-10-28",
+      "done": false
+    },
+    {
+      "id": "id_mvnj0mly_p5xe4",
+      "text": "Return library book: Cormen Algorithms",
+      "priority": "Low",
+      "due": "2026-10-30",
+      "done": false
+    },
+    {
+      "id": "id_mvnj0mly_ypxvt",
+      "text": "Complete College Identity Card renewal form",
+      "priority": "Medium",
+      "due": "2026-10-23",
+      "done": true
+    },
+    {
+      "id": "id_mvnj0mly_zu83l",
+      "text": "Setup Visual Studio Code on personal laptop",
+      "priority": "Low",
+      "due": "2026-10-21",
+      "done": true
+    }
+  ],
+  "pomodoros": {
+    "date": "2026-10-25",
+    "count": 3
+  },
+  "theme": "dark"
+}

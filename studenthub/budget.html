@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Tracker — StudentHub</title>
+  <meta name="description" content="Track your student allowance, daily expenses, safe-to-spend limits, and spending breakdown.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Sticky Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo-icon">🎓</span>
+        <span>StudentHub</span>
+      </a>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html" class="nav-link">Dashboard</a></li>
+        <li><a href="planner.html" class="nav-link">Planner</a></li>
+        <li><a href="budget.html" class="nav-link active">Budget</a></li>
+        <li><a href="attendance.html" class="nav-link">Attendance</a></li>
+        <li><a href="todo.html" class="nav-link">To-Do</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">🌙</button>
+        <button id="hamburgerBtn" class="hamburger-btn" aria-label="Toggle Menu" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="container">
+    <div class="page-header">
+      <h1 class="page-title">Monthly Budget &amp; Expenses 💰</h1>
+      <p class="page-subtitle">Track your allowance, daily safe-to-spend target, and category spending breakdown.</p>
+    </div>
+
+    <!-- Alert / Warning Banner for Budget Thresholds -->
+    <div id="budgetWarningBanner" style="display: none;"></div>
+
+    <!-- Top Summary Metrics Grid -->
+    <section class="grid-cards" aria-label="Budget Metrics">
+      <div class="card">
+        <div class="card-label">Monthly Allowance</div>
+        <div class="card-number" id="metricAllowance">₹0</div>
+        <button id="editAllowanceBtn" class="btn btn-secondary btn-sm" style="margin-top: 10px;">Set Allowance</button>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Total Spent This Month</div>
+        <div class="card-number" id="metricSpent">₹0</div>
+        <div class="card-label" id="metricSpentPct">0% of allowance</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Remaining Balance</div>
+        <div class="card-number" id="metricRemaining">₹0</div>
+        <div class="card-label" id="metricRemainingNote">On track</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Safe to Spend Per Day</div>
+        <div class="card-number" id="metricSafePerDay" style="color: var(--primary);">₹0</div>
+        <div class="card-label" id="metricDaysLeft">30 days left this month</div>
+      </div>
+    </section>
+
+    <!-- Category Spending Chart (Pure CSS bars) -->
+    <section class="card" style="margin-bottom: 24px;" aria-label="Category Spending Breakdown">
+      <h2 class="card-title">Category Spending Breakdown</h2>
+      <div class="budget-chart">
+        <div class="chart-bars" id="chartBarsContainer">
+          <!-- Dynamically populated CSS bar segments -->
+        </div>
+        <div class="chart-legend" id="chartLegendContainer">
+          <!-- Dynamically populated legend -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Two-column layout: Add Expense Form left, Expense History right -->
+    <div class="two-col">
+
+      <!-- Left Column: Add Expense Form -->
+      <section class="card" aria-label="Add Expense">
+        <h2 class="card-title">Add New Expense</h2>
+        <form id="addExpenseForm" novalidate>
+          <div class="form-group">
+            <label for="expenseAmount" class="form-label">Amount (₹) *</label>
+            <input type="number" id="expenseAmount" class="input" placeholder="e.g. 150" min="1" step="any" required>
+            <div class="field-error" id="expenseAmountError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="expenseCategory" class="form-label">Category *</label>
+            <select id="expenseCategory" class="select" required>
+              <option value="Food">🍔 Food</option>
+              <option value="Travel">🚌 Travel</option>
+              <option value="Recharge">📱 Recharge</option>
+              <option value="Study">📚 Study</option>
+              <option value="Fun">🎮 Fun</option>
+              <option value="Other">📦 Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="expenseDate" class="form-label">Date *</label>
+            <input type="date" id="expenseDate" class="input" required>
+            <div class="field-error" id="expenseDateError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="expenseNote" class="form-label">Note (optional)</label>
+            <input type="text" id="expenseNote" class="input" placeholder="e.g. Canteen samosa &amp; chai" maxlength="120">
+            <div class="char-counter"><span id="expenseNoteCharCount">0</span>/120</div>
+            <div class="field-error" id="expenseNoteError"></div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            <span>➕</span> Record Expense
+          </button>
+        </form>
+      </section>
+
+      <!-- Right Column: Expense List & Month History -->
+      <div>
+        <section class="card" style="margin-bottom: 24px;" aria-label="Recent Expenses">
+          <div class="card-title">
+            <span>Expenses for This Month</span>
+            <span id="expenseCountBadge" class="badge badge-primary">0 items</span>
+          </div>
+
+          <!-- Search & Sort Controls -->
+          <div class="filter-bar">
+            <input type="text" id="expenseSearchInput" class="input search-input" placeholder="🔍 Search note or category..." style="font-size: 0.88rem; min-height: 36px; padding: 6px 12px;">
+            <select id="expenseSortSelect" class="select" style="width: auto; min-height: 36px; font-size: 0.88rem; padding: 6px 10px;">
+              <option value="date-desc">Newest First</option>
+              <option value="date-asc">Oldest First</option>
+              <option value="amount-desc">Highest Amount (₹)</option>
+              <option value="amount-asc">Lowest Amount (₹)</option>
+              <option value="category">Category (A-Z)</option>
+            </select>
+          </div>
+
+          <div id="expensesListContainer" class="item-list">
+            <!-- Dynamically populated expense items -->
+          </div>
+        </section>
+
+        <!-- Month History Archive -->
+        <section class="card" aria-label="Monthly Archive">
+          <h2 class="card-title">Past Months History</h2>
+          <div id="monthHistoryContainer">
+            <!-- Dynamically populated history -->
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal: Set Monthly Allowance -->
+  <div class="modal-backdrop" id="setAllowanceModal" role="dialog" aria-modal="true" aria-labelledby="setAllowanceModalTitle">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="setAllowanceModalTitle">💵 Set Monthly Allowance</h3>
+        <button class="modal-close" id="closeAllowanceModalBtn" aria-label="Close modal">✕</button>
+      </div>
+      <form id="setAllowanceForm" novalidate>
+        <div class="form-group">
+          <label for="allowanceInput" class="form-label">Allowance Amount in Rupees (₹) *</label>
+          <input type="number" id="allowanceInput" class="input" placeholder="e.g. 6000" min="1" step="any" required>
+          <div class="field-error" id="allowanceInputError"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelAllowanceBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Allowance</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Edit Expense -->
+  <div class="modal-backdrop" id="editExpenseModal" role="dialog" aria-modal="true" aria-labelledby="editExpenseModalTitle">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="editExpenseModalTitle">✏️ Edit Expense</h3>
+        <button class="modal-close" id="closeEditExpenseModalBtn" aria-label="Close modal">✕</button>
+      </div>
+      <form id="editExpenseForm" novalidate>
+        <input type="hidden" id="editExpenseId">
+        <div class="form-group">
+          <label for="editExpenseAmount" class="form-label">Amount (₹) *</label>
+          <input type="number" id="editExpenseAmount" class="input" min="1" step="any" required>
+          <div class="field-error" id="editExpenseAmountError"></div>
+        </div>
+        <div class="form-group">
+          <label for="editExpenseCategory" class="form-label">Category *</label>
+          <select id="editExpenseCategory" class="select" required>
+            <option value="Food">🍔 Food</option>
+            <option value="Travel">🚌 Travel</option>
+            <option value="Recharge">📱 Recharge</option>
+            <option value="Study">📚 Study</option>
+            <option value="Fun">🎮 Fun</option>
+            <option value="Other">📦 Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editExpenseDate" class="form-label">Date *</label>
+          <input type="date" id="editExpenseDate" class="input" required>
+          <div class="field-error" id="editExpenseDateError"></div>
+        </div>
+        <div class="form-group">
+          <label for="editExpenseNote" class="form-label">Note (optional)</label>
+          <input type="text" id="editExpenseNote" class="input" maxlength="120">
+          <div class="field-error" id="editExpenseNoteError"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelEditExpenseBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>Built by StudentHub Team | HTML, CSS, JavaScript</p>
+    </div>
+  </footer>
+
+  <!-- Scripts in required order -->
+  <script src="js/storage.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/budget.js"></script>
+</body>
+</html>

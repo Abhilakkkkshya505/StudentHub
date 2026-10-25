@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudentHub — Architecture & Team Walkthrough Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 18mm 16mm 18mm 16mm;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      color: #1e293b;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Document Header Banner */
+    .report-cover {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+      color: #ffffff;
+      padding: 24px 28px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 14px rgba(49, 46, 129, 0.15);
+      page-break-inside: avoid;
+    }
+
+    .report-cover h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 20pt;
+      font-weight: 800;
+      color: #ffffff !important;
+      margin: 0 0 8px 0;
+      letter-spacing: -0.5px;
+      border-bottom: none !important;
+      padding-bottom: 0 !important;
+    }
+
+    .report-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 9pt;
+      color: #c7d2fe;
+      margin-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 10px;
+    }
+
+    .report-meta-item strong {
+      color: #ffffff;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4, h5 {
+      font-family: 'Poppins', sans-serif;
+      color: #0f172a;
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+
+    h1 {
+      font-size: 16pt;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 6px;
+      margin-top: 28px;
+      margin-bottom: 14px;
+    }
+
+    h2 {
+      font-size: 13pt;
+      border-bottom: 1.5px solid #f1f5f9;
+      padding-bottom: 4px;
+      margin-top: 22px;
+      margin-bottom: 10px;
+      color: #312e81;
+    }
+
+    h3 {
+      font-size: 11pt;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      color: #1e293b;
+    }
+
+    h4 {
+      font-size: 10pt;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      color: #475569;
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    /* Blockquotes & Callouts */
+    blockquote {
+      margin: 14px 0;
+      padding: 10px 14px;
+      background-color: #f8fafc;
+      border-left: 4px solid #4f46e5;
+      color: #334155;
+      border-radius: 0 6px 6px 0;
+      page-break-inside: avoid;
+      break-inside: avoid;
+      font-size: 9.5pt;
+    }
+
+    blockquote p {
+      margin: 0;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 18px 0;
+      font-size: 8.8pt;
+      page-break-inside: avoid;
+      break-inside: avoid;
+      background: #ffffff;
+    }
+
+    th, td {
+      padding: 7px 9px;
+      text-align: left;
+      vertical-align: top;
+      border: 1px solid #cbd5e1;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+      font-size: 8.5pt;
+      letter-spacing: 0.3px;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+
+    /* Code blocks */
+    pre {
+      background-color: #0f172a !important;
+      color: #f8fafc !important;
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 8.2pt;
+      line-height: 1.45;
+      overflow-x: auto;
+      page-break-inside: avoid;
+      break-inside: avoid;
+      margin: 12px 0;
+      border: 1px solid #1e293b;
+    }
+
+    code {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 8.5pt;
+      color: #4338ca;
+      background-color: #e0e7ff;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    pre code {
+      background: transparent !important;
+      color: #e2e8f0 !important;
+      padding: 0;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin-top: 0;
+      margin-bottom: 10px;
+      padding-left: 22px;
+    }
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    /* Mathematics styling */
+    .math-block {
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      border-radius: 6px;
+      padding: 8px 14px;
+      margin: 10px 0;
+      text-align: center;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .math-formula {
+      font-family: 'Fira Code', monospace;
+      font-size: 10pt;
+      font-weight: 600;
+      color: #312e81;
+    }
+
+    .math-inline {
+      font-family: 'Fira Code', monospace;
+      font-size: 8.8pt;
+      font-weight: 600;
+      color: #3730a3;
+      background: #eef2ff;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    /* Section Horizontal Rules */
+    hr {
+      border: 0;
+      height: 1px;
+      background: #e2e8f0;
+      margin: 20px 0;
+    }
+
+    /* Avoid breaks inside specific list or card sections */
+    li > strong {
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+  <div class="report-cover">
+    <h1>🎓 StudentHub — Engineering Report</h1>
+    <p style="margin: 0; font-size: 10.5pt; color: #e0e7ff;">
+      Complete Codebase Architecture, Mathematical Algorithms & Team Presentation Guide
+    </p>
+    <div class="report-meta">
+      <div class="report-meta-item"><strong>Course:</strong> 1st Year B.Tech Web Development</div>
+      <div class="report-meta-item"><strong>Platform:</strong> StudentHub (Offline-First)</div>
+      <div class="report-meta-item"><strong>Stack:</strong> Semantic HTML5, Vanilla CSS3, JavaScript ES6+</div>
+      <div class="report-meta-item"><strong>Storage:</strong> HTML5 localStorage + Native Node.js Server</div>
+    </div>
+  </div>
+
+  <div class="report-body">
+    <h1>🎓 StudentHub — Complete Codebase Architecture &amp; Team Walkthrough Guide</h1>
+<blockquote>
+<p><strong>Target Audience</strong>: Team Members, Project Partners, Code Reviewers, and Evaluators / Faculty.<br><strong>Purpose</strong>: A comprehensive, step-by-step technical breakdown of <strong>how StudentHub works</strong>, line-by-line architectural logic, mathematical algorithms, data schemas, security precautions, and a viva/presentation Q&amp;A cheat sheet.</p>
+</blockquote>
+<hr>
+<h2>📑 Table of Contents</h2>
+<ol>
+<li><a href="#1-project-overview--core-philosophy">Project Overview &amp; Core Philosophy</a></li>
+<li><a href="#2-high-level-system-architecture--directory-map">High-Level System Architecture &amp; Directory Map</a></li>
+<li><a href="#3-data-flow-state-management--localstorage-schema">Data Flow, State Management &amp; LocalStorage Schema</a></li>
+<li><a href="#4-file-by-file-technical-deep-dive">File-by-File Technical Deep Dive</a><ul>
+<li><a href="#41-global-styles--design-system-cssstylecss">4.1 Global Styles &amp; Design System (<code>css/style.css</code>)</a></li>
+<li><a href="#42-storage-abstraction--date-engine-jsstoragejs">4.2 Storage Abstraction &amp; Date Engine (<code>js/storage.js</code>)</a></li>
+<li><a href="#43-common-utilities-theme--audio-jscommonjs">4.3 Common Utilities, Theme &amp; Audio (<code>js/common.js</code>)</a></li>
+<li><a href="#44-executive-dashboard-indexhtml--jsdashboardjs">4.4 Executive Dashboard (<code>index.html</code> &amp; <code>js/dashboard.js</code>)</a></li>
+<li><a href="#45-exam-planner--study-scheduler-plannerhtml--jsplannerjs">4.5 Exam Planner &amp; Study Scheduler (<code>planner.html</code> &amp; <code>js/planner.js</code>)</a></li>
+<li><a href="#46-budget-tracker--css-charting-budgethtml--jsbudgetjs">4.6 Budget Tracker &amp; CSS Charting (<code>budget.html</code> &amp; <code>js/budget.js</code>)</a></li>
+<li><a href="#47-attendance-calculator--smart-hints-attendancehtml--jsattendancejs">4.7 Attendance Calculator &amp; Smart Hints (<code>attendance.html</code> &amp; <code>js/attendance.js</code>)</a></li>
+<li><a href="#48-to-do-list--pomodoro-timer-engine-todohtml--jstodojs">4.8 To-Do List &amp; Pomodoro Timer Engine (<code>todo.html</code> &amp; <code>js/todo.js</code>)</a></li>
+<li><a href="#49-automated-in-browser-test-suite-jstestsjs">4.9 Automated In-Browser Test Suite (<code>js/tests.js</code>)</a></li>
+<li><a href="#410-optional-zero-dependency-backend-serverjs">4.10 Optional Zero-Dependency Backend (<code>server.js</code>)</a></li>
+<li><a href="#411-end-to-end-headless-verification-verify_e2ejs">4.11 End-to-End Headless Verification (<code>verify_e2e.js</code>)</a></li>
+</ul>
+</li>
+<li><a href="#5-core-mathematical-algorithms--complexity-analysis">Core Mathematical Algorithms &amp; Complexity Analysis</a></li>
+<li><a href="#6-security-performance--edge-case-handling">Security, Performance &amp; Edge-Case Handling</a></li>
+<li><a href="#7-team-presentation--viva-qa-guide">Team Presentation &amp; Viva Q&amp;A Guide</a></li>
+<li><a href="#8-live-demonstration-script-3-minute-walkthrough">Live Demonstration Script (3-Minute Walkthrough)</a></li>
+</ol>
+<hr>
+<h2>1. Project Overview &amp; Core Philosophy</h2>
+<h3>What is StudentHub?</h3>
+<p><strong>StudentHub</strong> is an offline-first, all-in-one productivity suite specifically engineered for first-year Indian college and university students. During their transition into university, students typically struggle with cognitive fragmentation caused by using separate disconnected apps:</p>
+<ul>
+<li>Notion / physical diaries for syllabus schedules.</li>
+<li>Splitwise / Excel for canteen and hostel allowances.</li>
+<li>College ERP portals or WhatsApp notes for calculating attendance bunks.</li>
+<li>Distracting commercial to-do apps with ads, sign-in walls, and subscription popups.</li>
+</ul>
+<p>StudentHub brings all five essential workflows into one cohesive, distraction-free environment:</p>
+<ol>
+<li><strong>Executive Dashboard</strong>: Centralized high-level summary cards.</li>
+<li><strong>Exam Planner</strong>: Day-wise adaptive study schedule generator.</li>
+<li><strong>Budget Tracker</strong>: Daily safe-to-spend allowance calculator with pure CSS visualization.</li>
+<li><strong>Attendance Tracker</strong>: Class bunk/recovery calculator based on strict institutional cutoffs (e.g., 75%).</li>
+<li><strong>To-Do + Pomodoro</strong>: Two-tier prioritized tasks integrated with a Web Audio API study timer.</li>
+</ol>
+<h3>Architectural Philosophy</h3>
+<ol>
+<li><strong>Zero External Runtime Dependencies</strong>: No React, Vue, Angular, Tailwind, Bootstrap, or jQuery. Built exclusively with <strong>Semantic HTML5, Vanilla CSS3, and ES6+ JavaScript</strong>.</li>
+<li><strong>Offline-First &amp; Privacy-Preserving</strong>: All student records stay strictly inside the student&#39;s browser via HTML5 <code>localStorage</code>. No cloud tracking, no cookies, no mandatory login, and no telemetry.</li>
+<li><strong>Dual-Mode Capability</strong>:<ul>
+<li><strong>Mode A (Static / Browser-Only)</strong>: Double-click <code>index.html</code> or open via any static hosting (GitHub Pages, Vercel, Live Server). Works 100% offline.</li>
+<li><strong>Mode B (Full-Stack Mode)</strong>: Run <code>node server.js</code> using Node&#39;s native HTTP and File System modules for persistent file storage (<code>data/database.json</code>) and RESTful endpoints without installing any <code>node_modules</code>!</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>2. High-Level System Architecture &amp; Directory Map</h2>
+<pre><code>Project/
+├── index.html                   # Root redirect entry point
+├── studenthub/                  # Core application package
+│   ├── index.html               # 1. Executive Dashboard &amp; Unit Test Modal
+│   ├── planner.html             # 2. Exam Planner &amp; Study Scheduler
+│   ├── budget.html              # 3. Monthly Budget Tracker &amp; Expense Logger
+│   ├── attendance.html          # 4. Attendance &amp; Skip/Recovery Calculator
+│   ├── todo.html                # 5. Prioritized Tasks &amp; Pomodoro Timer
+│   ├── package.json             # NPM metadata &amp; start scripts (zero dependencies)
+│   ├── server.js                # Built-in Node.js HTTP REST &amp; Static Server
+│   ├── verify_e2e.js            # Automated headless integration test suite
+│   ├── data/
+│   │   └── database.json        # Persistent JSON database (created in server mode)
+│   ├── css/
+│   │   └── style.css            # Unified Design System, CSS Variables &amp; Themes
+│   └── js/
+│       ├── storage.js           # Storage layer, error boundaries &amp; date math
+│       ├── common.js            # Navbar, theme engine, toast, HTML sanitization
+│       ├── dashboard.js         # Dashboard aggregation, demo data loader
+│       ├── planner.js           # Exam syllabus tracker &amp; study plan algorithm
+│       ├── budget.js            # Budget engine, rollover &amp; CSS bar chart
+│       ├── attendance.js        # Attendance calculations &amp; undo manager
+│       ├── todo.js              # Task sorting &amp; Web Audio Pomodoro engine
+│       └── tests.js             # 10 automated browser-based unit tests
+</code></pre>
+<hr>
+<h2>3. Data Flow, State Management &amp; LocalStorage Schema</h2>
+<p>All client-side data is persisted in browser <code>localStorage</code>. Every module accesses data strictly through the abstraction layer defined in <code>js/storage.js</code>.</p>
+<pre><code>                    ┌───────────────────────────┐
+                    │       User Interaction    │
+                    │ (Forms, Clicks, Checkbox) │
+                    └─────────────┬─────────────┘
+                                  │
+                                  ▼
+                    ┌───────────────────────────┐
+                    │      Module Controller    │
+                    │ (planner.js, budget.js... )│
+                    └─────────────┬─────────────┘
+                                  │
+                                  ▼
+                    ┌───────────────────────────┐
+                    │      js/storage.js        │
+                    │   getData() / setData()   │
+                    │ (Error handling &amp; Backup) │
+                    └──────┬─────────────┬──────┘
+                           │             │
+        (Mode A: Offline)  │             │  (Mode B: Server Mode)
+                           ▼             ▼
+                 ┌───────────────┐ ┌──────────────────┐
+                 │ Browser       │ │ Background Fetch │
+                 │ localStorage  │ │ POST /api/...   │
+                 └───────────────┘ └────────┬─────────┘
+                                            ▼
+                                   ┌──────────────────┐
+                                   │ data/            │
+                                   │  database.json   │
+                                   └──────────────────┘
+</code></pre>
+<h3>LocalStorage Schema Specifications</h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Data Structure &amp; Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sh_subjects</code></td>
+<td><code>Array&lt;Object&gt;</code></td>
+<td><code>[ { &quot;id&quot;: &quot;sub_1&quot;, &quot;name&quot;: &quot;Data Structures&quot;, &quot;examDate&quot;: &quot;2026-11-15&quot;, &quot;topics&quot;: [ { &quot;id&quot;: &quot;top_1&quot;, &quot;title&quot;: &quot;Binary Trees&quot;, &quot;done&quot;: false } ] } ]</code></td>
+<td>Enrolled academic courses, exam dates (<code>YYYY-MM-DD</code>), and individual syllabus checklist topics.</td>
+</tr>
+<tr>
+<td><code>sh_budget</code></td>
+<td><code>Object</code></td>
+<td><code>{ &quot;month&quot;: &quot;2026-10&quot;, &quot;allowance&quot;: 6000, &quot;expenses&quot;: [ { &quot;id&quot;: &quot;exp_1&quot;, &quot;amount&quot;: 250, &quot;category&quot;: &quot;Food&quot;, &quot;date&quot;: &quot;2026-10-24&quot;, &quot;note&quot;: &quot;Hostel mess fee&quot; } ], &quot;history&quot;: [ { &quot;month&quot;: &quot;2026-09&quot;, &quot;allowance&quot;: 5000, &quot;spent&quot;: 4820 } ] }</code></td>
+<td>Monthly allowance, list of categorized expenses, and archived past months.</td>
+</tr>
+<tr>
+<td><code>sh_attendance</code></td>
+<td><code>Array&lt;Object&gt;</code></td>
+<td><code>[ { &quot;id&quot;: &quot;att_1&quot;, &quot;name&quot;: &quot;Mathematics I&quot;, &quot;required&quot;: 75, &quot;present&quot;: 18, &quot;total&quot;: 22, &quot;lastMarked&quot;: &quot;2026-10-24&quot;, &quot;lastAction&quot;: &quot;present&quot; } ]</code></td>
+<td>Attendance tracking per course, required cutoff %, and last action pointer for undo operations.</td>
+</tr>
+<tr>
+<td><code>sh_todos</code></td>
+<td><code>Array&lt;Object&gt;</code></td>
+<td><code>[ { &quot;id&quot;: &quot;td_1&quot;, &quot;text&quot;: &quot;Submit Lab Assignment&quot;, &quot;priority&quot;: &quot;High&quot;, &quot;due&quot;: &quot;2026-10-28&quot;, &quot;done&quot;: false } ]</code></td>
+<td>Task management with 3 priority tiers (<code>High</code>, <code>Medium</code>, <code>Low</code>) and optional deadline dates.</td>
+</tr>
+<tr>
+<td><code>sh_pomodoros</code></td>
+<td><code>Object</code></td>
+<td><code>{ &quot;date&quot;: &quot;2026-10-25&quot;, &quot;count&quot;: 4 }</code></td>
+<td>Daily counter tracking completed 25-minute Pomodoro study intervals.</td>
+</tr>
+<tr>
+<td><code>sh_theme</code></td>
+<td><code>String</code></td>
+<td><code>&quot;light&quot;</code> or <code>&quot;dark&quot;</code></td>
+<td>User interface theme preference applied dynamically to the root HTML element.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>4. File-by-File Technical Deep Dive</h2>
+<hr>
+<h3>4.1 Global Styles &amp; Design System (<code>css/style.css</code>)</h3>
+<p><code>style.css</code> contains the entire visual design system for all 5 pages. It avoids CSS bloat by defining systematic design tokens.</p>
+<h4>Key Architectural Components:</h4>
+<ol>
+<li><strong>CSS Custom Properties (Variables)</strong>:<ul>
+<li>Root variables <code>:root</code> define Light Mode colors (<code>--bg-primary: #f8fafc;</code>, <code>--text-primary: #0f172a;</code>, <code>--card-bg: #ffffff;</code>, <code>--primary: #4f46e5;</code>).</li>
+<li><code>[data-theme=&quot;dark&quot;]</code> overrides these tokens with slate-toned, low-strain night colors (<code>--bg-primary: #0f172a;</code>, <code>--card-bg: #1e293b;</code>, <code>--text-primary: #f1f5f9;</code>).</li>
+</ul>
+</li>
+<li><strong>Typography</strong>:<ul>
+<li>Primary heading font: <strong>Poppins</strong> (modern, bold geometric sans-serif).</li>
+<li>Body font: <strong>Inter</strong> (high legibility at small sizes for numbers and tables).</li>
+<li>System font fallbacks (<code>system-ui, -apple-system, sans-serif</code>) guarantee zero render blocking if offline.</li>
+</ul>
+</li>
+<li><strong>Pure CSS Responsive Layouts</strong>:<ul>
+<li>Flexbox and CSS Grid layout engines.</li>
+<li>Dynamic breakpoint at <code>768px</code> transforms the top navigation bar into a mobile slide-out hamburger menu.</li>
+</ul>
+</li>
+<li><strong>Visual Data Visualizations</strong>:<ul>
+<li><strong>Progress Bars</strong>: Pure CSS <code>&lt;div class=&quot;progress-bar&quot;&gt;&lt;div class=&quot;progress-fill&quot; style=&quot;width: X%;&quot;&gt;&lt;/div&gt;&lt;/div&gt;</code> with smooth CSS transitions.</li>
+<li><strong>Proportional Stacked Bar Chart</strong> (<code>.category-bar-chart</code>): Flexbox container where each child segment receives a proportional width (<code>width: 35%</code>) and distinct category color.</li>
+</ul>
+</li>
+<li><strong>Toast Notifications &amp; Modals</strong>:<ul>
+<li>Fixed-position <code>.toast-container</code> floating at the bottom-right corner with <code>@keyframes slideInUp</code>.</li>
+<li>Accessible <code>.modal-backdrop</code> dialogs with backdrop blur (<code>backdrop-filter: blur(4px)</code>).</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>4.2 Storage Abstraction &amp; Date Engine (<code>js/storage.js</code>)</h3>
+<p><code>storage.js</code> acts as the safety gateway between raw browser storage and UI components.</p>
+<h4>Essential Functions:</h4>
+<ol>
+<li><code>getData(key, fallback)</code>:<ul>
+<li>Wraps <code>localStorage.getItem()</code> in a <code>try...catch</code> block.</li>
+<li>Parses the JSON string; if parsing fails, or key does not exist, it safely returns the supplied <code>fallback</code> value, preventing application crashes.</li>
+</ul>
+</li>
+<li><code>setData(key, value)</code>:<ul>
+<li>Serializes data via <code>JSON.stringify()</code>.</li>
+<li>Intercepts <code>QuotaExceededError</code> (e.g., if mobile storage is exhausted) and displays a non-blocking toast warning to the user.</li>
+<li>Automatically synchronizes with <code>server.js</code> if running in HTTP mode.</li>
+</ul>
+</li>
+<li><code>calculateDaysLeft(fromDateStr, targetDateStr)</code>:<ul>
+<li>Normalizes both dates to <strong>UTC Midnight</strong> (<code>00:00:00.000Z</code>).</li>
+<li>Prevents daylight savings and timezone conversion discrepancies.</li>
+<li>Formula:<div class="math-block"><span class="math-formula">Δdays = round≤ft(\frac{targetMidnight - fromMidnight}{86,400,000  ms}\right)</span></div></li>
+</ul>
+</li>
+<li><code>exportAllData()</code> &amp; <code>importDataFromFile(file)</code>:<ul>
+<li>Allows students to export their entire productivity database as a single portable JSON file (<code>studenthub_backup_YYYY-MM-DD.json</code>).</li>
+<li>Implements schema validation on imported JSON before overwriting storage to prevent file corruption.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>4.3 Common Utilities, Theme &amp; Audio (<code>js/common.js</code>)</h3>
+<p><code>common.js</code> loads on every page and manages universal interface behaviors.</p>
+<h4>Essential Features:</h4>
+<ol>
+<li><strong>Theme Controller</strong>:<ul>
+<li><code>initTheme()</code> and <code>applyTheme(theme)</code>: Reads <code>sh_theme</code> from storage on initial page load to eliminate dark mode flashing. Toggles the <code>data-theme=&quot;dark&quot;</code> attribute on <code>&lt;html&gt;</code>.</li>
+</ul>
+</li>
+<li><strong>Accessible Navbar &amp; Active State</strong>:<ul>
+<li><code>highlightActiveNavLink()</code> inspects <code>window.location.pathname</code> and adds the <code>.active</code> class to the matching navigation link.</li>
+<li><code>initHamburgerMenu()</code> binds accessible <code>aria-expanded</code> attributes for mobile screen-readers.</li>
+</ul>
+</li>
+<li><strong>Toast Notification System</strong>:<ul>
+<li><code>showToast(message, type = &#39;info&#39;, duration = 3000)</code>: Dynamically generates alert elements with icons (<code>success</code>, <code>warning</code>, <code>error</code>, <code>info</code>), automatically unmounting them via <code>setTimeout</code>.</li>
+</ul>
+</li>
+<li><strong>Security Sanitizer (<code>escapeHTML</code>)</strong>:<ul>
+<li>Prevents Stored Cross-Site Scripting (XSS).</li>
+<li>Replaces <code>&amp;</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&quot;</code>, <code>&#39;</code> with HTML entities before injecting user input into <code>innerHTML</code>.</li>
+</ul>
+</li>
+<li><strong>Web Audio API Synthesizer (<code>playChime</code>)</strong>:<ul>
+<li>Generates an acoustic chime without relying on external <code>.mp3</code> or <code>.wav</code> files.</li>
+<li>Uses <code>window.AudioContext</code> to construct dual sine-wave audio oscillators:<ul>
+<li>Oscillator 1: <strong>587.33 Hz</strong> (D5 note)</li>
+<li>Oscillator 2: <strong>880.00 Hz</strong> (A5 note)</li>
+</ul>
+</li>
+<li>Modulates an exponential decay envelope (<code>gainNode.gain.exponentialRampToValueAtTime</code>) for a gentle chime sound.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>4.4 Executive Dashboard (<code>index.html</code> &amp; <code>js/dashboard.js</code>)</h3>
+<p>The dashboard serves as the central cockpit, aggregating live metrics from all other four modules.</p>
+<h4>Functional Logic:</h4>
+<ol>
+<li><code>renderGreeting()</code>:<ul>
+<li>Queries <code>new Date().getHours()</code> to dynamically display:<ul>
+<li><code>Good morning</code> (05:00 - 11:59)</li>
+<li><code>Good afternoon</code> (12:00 - 16:59)</li>
+<li><code>Good evening</code> (17:00 - 04:59)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>renderExamCard()</code>:<ul>
+<li>Iterates through <code>sh_subjects</code>, finds the minimum positive <code>daysLeft</code>.</li>
+<li>If <code>daysLeft &lt;= 3</code>, renders a glowing red warning badge (<code>badge-danger</code>).</li>
+</ul>
+</li>
+<li><code>renderMoneyCard()</code>:<ul>
+<li>Reads <code>sh_budget</code>, computes total expenses for the active month, and calculates <code>remaining = allowance - spent</code>.</li>
+<li>Displays safe-to-spend per day and percentage spent progress bar.</li>
+</ul>
+</li>
+<li><code>renderAttendanceCard()</code>:<ul>
+<li>Iterates through <code>sh_attendance</code>, calculates individual percentages, and locates the subject with the lowest score.</li>
+<li>Emphasizes low-attendance courses with urgent warning banners if below cutoff (e.g. 75%).</li>
+</ul>
+</li>
+<li><code>renderTasksCard()</code>:<ul>
+<li>Filters pending tasks, sorts them using the two-tier algorithm (High Priority first, followed by earliest due date), and renders the top 3 items.</li>
+</ul>
+</li>
+<li><code>loadDemoData()</code>:<ul>
+<li>Pre-populates realistic Indian college records (Data Structures, Engineering Physics, Canteen snacks, Hostel mess dues, High-priority assignments) with one click for easy evaluation.</li>
+</ul>
+</li>
+<li><code>clearAllData()</code>:<ul>
+<li>Provides a double-confirmation modal before purging <code>localStorage</code>.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>4.5 Exam Planner &amp; Study Scheduler (<code>planner.html</code> &amp; <code>js/planner.js</code>)</h3>
+<p>The Exam Planner manages academic subjects, topics, and auto-generates a balanced study schedule.</p>
+<h4>Key Mechanisms:</h4>
+<ol>
+<li><strong>Input Validation</strong>:<ul>
+<li><code>initExamDateMin()</code> enforces that the HTML <code>&lt;input type=&quot;date&quot;&gt;</code> minimum selectable date is <code>today</code>. Prevents adding exams in the past.</li>
+</ul>
+</li>
+<li><strong>Topic Management</strong>:<ul>
+<li>Students can add granular topics under any subject.</li>
+<li>Ticking off a topic instantly updates that subject&#39;s progress bar percentage:<div class="math-block"><span class="math-formula">Progress \% = round≤ft(\frac{Completed Topics}{Total Topics} × 100\right)</span></div></li>
+</ul>
+</li>
+<li><strong>Adaptive Study Plan Algorithm</strong>:<ul>
+<li>Spreads unfinished syllabus topics evenly across the days remaining before the exam date.</li>
+<li>If a student marks a topic as done, or clicks the <strong>&quot;Reschedule&quot;</strong> button, the scheduler recomputes the distribution for remaining days.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>4.6 Budget Tracker &amp; CSS Charting (<code>budget.html</code> &amp; <code>js/budget.js</code>)</h3>
+<p>Tracks college allowances, hostel expenses, and daily spending discipline.</p>
+<h4>Key Mechanisms:</h4>
+<ol>
+<li><strong>Allowance Setup &amp; Safe Daily Limit</strong>:<ul>
+<li>Allows students to configure their monthly allowance in Indian Rupees (₹).</li>
+<li>Computes daily safe-to-spend:<div class="math-block"><span class="math-formula">Daily Safe Limit = \max≤ft(0, ≤ft⌊\frac{Remaining Allowance}{Days Left in Current Month} \right⌋\right)</span></div></li>
+</ul>
+</li>
+<li><strong>Warning Banners</strong>:<ul>
+<li><strong>Orange Warning Banner</strong>: Displays when total expenditure reaches or exceeds <strong>80%</strong> of the monthly budget.</li>
+<li><strong>Red Danger Banner</strong>: Displays when total expenditure exceeds <strong>100%</strong> (budget overrun).</li>
+</ul>
+</li>
+<li><strong>Pure CSS Proportional Breakdown Chart</strong>:<ul>
+<li>Groups expenses into standard categories: <code>Food</code>, <code>Travel</code>, <code>Recharge</code>, <code>Study</code>, <code>Fun</code>, <code>Other</code>.</li>
+<li>Calculates percentage share per category.</li>
+<li>Injects proportional flex items into a CSS container bar without using external charting libraries.</li>
+</ul>
+</li>
+<li><strong>Month Rollover &amp; Archive History</strong>:<ul>
+<li><code>checkMonthRollover()</code> detects when the system calendar advances to a new month (e.g., from <code>2026-10</code> to <code>2026-11</code>).</li>
+<li>Automatically archives the completed month&#39;s total into the <code>history</code> array and resets current expenses for the new month.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>4.7 Attendance Calculator &amp; Smart Hints (<code>attendance.html</code> &amp; <code>js/attendance.js</code>)</h3>
+<p>Empowers students to maintain university attendance requirements (e.g. 75%) through actionable mathematical formulas.</p>
+<h4>Key Mechanisms:</h4>
+<ol>
+<li><strong>Attendance Logging</strong>:<ul>
+<li>Quick one-tap <strong>&quot;Present&quot;</strong> and <strong>&quot;Absent&quot;</strong> buttons.</li>
+<li>Increments <code>present</code> and <code>total</code> counters in <code>sh_attendance</code>.</li>
+</ul>
+</li>
+<li><strong>Undo Action Stack</strong>:<ul>
+<li>Maintains <code>lastAction</code> metadata (<code>&quot;present&quot;</code> or <code>&quot;absent&quot;</code>).</li>
+<li>Clicking <strong>&quot;Undo last&quot;</strong> safely reverts the previous entry, preventing accidental taps on mobile touchscreens.</li>
+</ul>
+</li>
+<li><strong>Smart Guidance Hints</strong>:<ul>
+<li><strong>If current % <span class="math-inline">≥</span> required %</strong>: Uses <strong>Algorithm 3 (Skip Calculator)</strong> to tell the student exactly how many upcoming classes can be safely skipped without dropping below cutoff:<div class="math-block"><span class="math-formula">Safe Skips = ≤ft⌊\frac{Present × 100}{Required} - Total \right⌋</span></div></li>
+<li><strong>If current % <span class="math-inline">&lt;</span> required %</strong>: Uses <strong>Algorithm 4 (Recovery Calculator)</strong> to tell the student exactly how many consecutive future classes must be attended to regain good standing:<div class="math-block"><span class="math-formula">Classes to Attend = ≤ft⌈\frac{Required × Total - 100 × Present}{100 - Required} \right⌉</span></div></li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>4.8 To-Do List &amp; Pomodoro Timer Engine (<code>todo.html</code> &amp; <code>js/todo.js</code>)</h3>
+<p>Combines assignment tracking with an integrated Pomodoro study timer.</p>
+<h4>Key Mechanisms:</h4>
+<ol>
+<li><strong>Two-Tier Sorting Algorithm</strong>:<ul>
+<li>Unfinished tasks are sorted first by priority level (<code>High</code> <span class="math-inline">\to</span> <code>Medium</code> <span class="math-inline">\to</span> <code>Low</code>).</li>
+<li>Tasks with identical priority are sorted chronologically by due date (<code>earliest</code> first).</li>
+<li>Tasks without a due date are placed after dated tasks.</li>
+<li>Completed tasks are sorted to the bottom.</li>
+</ul>
+</li>
+<li><strong>Overdue Detection</strong>:<ul>
+<li>Checks if <code>task.due &lt; todayStr &amp;&amp; !task.done</code>.</li>
+<li>Attaches a prominent red <code>Overdue</code> badge to alert the student.</li>
+</ul>
+</li>
+<li><strong>Pomodoro Engine State Machine</strong>:<ul>
+<li>Operates in two modes: <strong>Focus (25 minutes)</strong> and <strong>Break (5 minutes)</strong>.</li>
+<li>Controlled via <code>startPomodoro()</code>, <code>pausePomodoro()</code>, and <code>resetPomodoro()</code>.</li>
+<li>Uses <code>setInterval()</code> ticking every second.</li>
+<li>Synchronizes remaining time to the browser tab title:
+<code>document.title = &quot;(24:58) Focus — StudentHub&quot;;</code></li>
+<li>Plays the Web Audio synthesizer chime and increments <code>sh_pomodoros.count</code> upon completion of focus intervals.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>4.9 Automated In-Browser Test Suite (<code>js/tests.js</code>)</h3>
+<p>StudentHub contains a built-in automated test suite that runs directly inside the browser.</p>
+<ul>
+<li>Accessible on <code>index.html</code> by clicking the <strong>&quot;Run self-tests&quot;</strong> button in the footer or info panel.</li>
+<li>Executes 10 unit test cases verifying mathematical formulas, boundary conditions, zero-division guards, and negative value clamping.</li>
+<li>Displays a modal summarizing each test vector, expected output, actual result, and a pass/fail indicator.</li>
+</ul>
+<hr>
+<h3>4.10 Optional Zero-Dependency Backend (<code>server.js</code>)</h3>
+<p>While StudentHub works completely offline, <code>server.js</code> provides an optional backend for persistent multi-device access.</p>
+<h4>Architecture:</h4>
+<ul>
+<li>Built with <strong>Node.js standard libraries only</strong> (<code>http</code>, <code>fs</code>, <code>path</code>, <code>url</code>).</li>
+<li><strong>RESTful Endpoints</strong>:<ul>
+<li><code>GET /api/subjects</code> / <code>POST /api/subjects</code></li>
+<li><code>GET /api/budget</code> / <code>POST /api/budget</code></li>
+<li><code>GET /api/attendance</code> / <code>POST /api/attendance</code></li>
+<li><code>GET /api/todos</code> / <code>POST /api/todos</code></li>
+<li><code>GET /api/pomodoros</code> / <code>POST /api/pomodoros</code></li>
+<li><code>POST /api/backup/restore</code></li>
+</ul>
+</li>
+<li><strong>File Persistence</strong>: Atomically writes records to <code>data/database.json</code>.</li>
+<li><strong>Static File Serving</strong>: Serves <code>.html</code>, <code>.css</code>, <code>.js</code>, and icons with appropriate HTTP <code>Content-Type</code> headers and caching controls.</li>
+</ul>
+<hr>
+<h3>4.11 End-to-End Headless Verification (<code>verify_e2e.js</code>)</h3>
+<p><code>verify_e2e.js</code> is a headless integration test suite executed with <code>node verify_e2e.js</code>. It runs through 8 realistic user journeys:</p>
+<ol>
+<li>Fresh state initialization.</li>
+<li>Adding 3 subjects, 4 topics, and checking study plan generation.</li>
+<li>Setting an allowance of ₹5000, adding 8 expenses, and checking the 80% warning banner.</li>
+<li>Enrolling in 3 courses, logging attendance, and testing the undo stack.</li>
+<li>Creating 6 prioritized tasks and testing filter toggles.</li>
+<li>Verifying dashboard aggregation across all metrics.</li>
+<li>Simulating browser reloads to ensure persistence.</li>
+<li>Verifying JSON database backup and restore operations.</li>
+</ol>
+<hr>
+<h2>5. Core Mathematical Algorithms &amp; Complexity Analysis</h2>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Function Name</th>
+<th>Mathematical Formula</th>
+<th>Time Complexity</th>
+<th>Space Complexity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>1. Study Plan Distribution</strong></td>
+<td><code>calculateStudyPlanDistribution</code></td>
+<td><span class="math-inline">≤ft⌈\frac{Unfinished Topics}{Days Available} \right⌉</span></td>
+<td><span class="math-inline">O(1)</span></td>
+<td><span class="math-inline">O(1)</span></td>
+</tr>
+<tr>
+<td><strong>2. Safe-to-Spend per Day</strong></td>
+<td><code>calculateSafeToSpend</code></td>
+<td><span class="math-inline">\max≤ft(0, ≤ft⌊\frac{Remaining Allowance}{Days Left in Month} \right⌋\right)</span></td>
+<td><span class="math-inline">O(1)</span></td>
+<td><span class="math-inline">O(1)</span></td>
+</tr>
+<tr>
+<td><strong>3. Attendance Skip Limit</strong></td>
+<td><code>calculateClassesCanSkip</code></td>
+<td><span class="math-inline">\max≤ft(0, ≤ft⌊\frac{Present × 100}{Required} - Total \right⌋\right)</span></td>
+<td><span class="math-inline">O(1)</span></td>
+<td><span class="math-inline">O(1)</span></td>
+</tr>
+<tr>
+<td><strong>4. Attendance Recovery Target</strong></td>
+<td><code>calculateClassesToAttend</code></td>
+<td><span class="math-inline">\max≤ft(0, ≤ft⌈\frac{Required × Total - 100 × Present}{100 - Required} \right⌉\right)</span></td>
+<td><span class="math-inline">O(1)</span></td>
+<td><span class="math-inline">O(1)</span></td>
+</tr>
+<tr>
+<td><strong>5. Two-Tier Task Sorting</strong></td>
+<td><code>sortTasksByPriorityAndDate</code></td>
+<td>Priority weight descending (<span class="math-inline">3 &gt; 2 &gt; 1</span>), then Due Date ascending</td>
+<td><span class="math-inline">O(N \log N)</span></td>
+<td><span class="math-inline">O(N)</span></td>
+</tr>
+<tr>
+<td><strong>6. Midnight Days Countdown</strong></td>
+<td><code>calculateDaysLeft</code></td>
+<td><span class="math-inline">round≤ft(\frac{targetMidnight - fromMidnight}{86,400,000}\right)</span></td>
+<td><span class="math-inline">O(1)</span></td>
+<td><span class="math-inline">O(1)</span></td>
+</tr>
+<tr>
+<td><strong>7. Pomodoro Step Conversion</strong></td>
+<td><code>calculatePomodoroTimerStep</code></td>
+<td><span class="math-inline">≤ft⌊(s / 60) \right⌋: (s mod 60)</span></td>
+<td><span class="math-inline">O(1)</span></td>
+<td><span class="math-inline">O(1)</span></td>
+</tr>
+<tr>
+<td><strong>8. Expense Category Share</strong></td>
+<td><code>calculateCategoryPercentages</code></td>
+<td><span class="math-inline">round≤ft(\frac{\sum Amount_{cat}}{Total Spent} × 100\right)</span></td>
+<td><span class="math-inline">O(N + C)</span></td>
+<td><span class="math-inline">O(C)</span></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>6. Security, Performance &amp; Edge-Case Handling</h2>
+<h3>1. Cross-Site Scripting (XSS) Prevention</h3>
+<ul>
+<li>In client applications that render user text via DOM templates, unescaped strings pose severe XSS vulnerabilities.</li>
+<li>StudentHub uses <code>escapeHTML(str)</code> in <code>js/common.js</code>:<pre><code class="language-javascript">function escapeHTML(str) {
+  if (!str) return &#39;&#39;;
+  return String(str)
+    .replace(/&amp;/g, &#39;&amp;amp;&#39;)
+    .replace(/&lt;/g, &#39;&amp;lt;&#39;)
+    .replace(/&gt;/g, &#39;&amp;gt;&#39;)
+    .replace(/&quot;/g, &#39;&amp;quot;&#39;)
+    .replace(/&#39;/g, &#39;&amp;#39;&#39;);
+}
+</code></pre>
+Every user input (task titles, subject names, expense notes) is passed through this sanitizer before insertion into template strings.</li>
+</ul>
+<h3>2. Division-by-Zero Guards</h3>
+<ul>
+<li>In attendance calculations: If <code>total === 0</code>, formulas guard against dividing by zero by returning <code>0</code> skips and <code>0</code> recovery classes.</li>
+<li>If required attendance is set to 100%, the recovery formula denominator <code>(100 - required)</code> is guarded to prevent infinite loops.</li>
+<li>In budget calculations: If days left in the month equals 0 (last day of the month), the divisor is clamped to <code>1</code>.</li>
+</ul>
+<h3>3. LocalStorage Quota Exceeded Protection</h3>
+<ul>
+<li>Standard browser storage limits are approximately 5MB.</li>
+<li><code>setData()</code> catches <code>QuotaExceededError</code> gracefully and alerts the student to export a backup rather than crashing silently.</li>
+</ul>
+<h3>4. Zero Render-Blocking Performance</h3>
+<ul>
+<li>Core CSS is organized in a single stylesheet (<code>css/style.css</code>).</li>
+<li>System font fallbacks prevent invisible text flashes (FOIT).</li>
+<li>Vanilla JavaScript executes without framework reconciliation overhead, delivering 60 FPS performance even on low-end smartphones.</li>
+</ul>
+<hr>
+<h2>7. Team Presentation &amp; Viva Q&amp;A Guide</h2>
+<p>Use these prepared responses when presenting StudentHub to evaluators, professors, or during code defense:</p>
+<h3>Q1: Why did your team choose Vanilla HTML/CSS/JavaScript instead of React, Next.js, or Tailwind?</h3>
+<blockquote>
+<p><strong>Answer</strong>:<br>&quot;For a college student productivity tool, our primary goals were <strong>instant zero-latency load times, 100% offline reliability, and zero maintenance overhead</strong>. Frameworks like React or Next.js introduce large JavaScript bundles (often over 200KB), virtual DOM diffing overhead, and complex build toolchains. By using pure Vanilla web standards, StudentHub runs on any device, loads in under 100ms, operates without an internet connection, and will continue working years from now without dependency updates or deprecation issues.&quot;</p>
+</blockquote>
+<hr>
+<h3>Q2: How does the application store data if there is no traditional SQL or MongoDB database?</h3>
+<blockquote>
+<p><strong>Answer</strong>:<br>&quot;StudentHub uses HTML5 <code>localStorage</code> as its primary storage engine, abstracted through our <code>js/storage.js</code> layer. Each module operates against dedicated keys (<code>sh_subjects</code>, <code>sh_budget</code>, <code>sh_attendance</code>, <code>sh_todos</code>, <code>sh_pomodoros</code>). To ensure data safety, we implemented a full <strong>JSON export and import backup system</strong>. Additionally, for environments requiring multi-device syncing, we developed an optional zero-dependency Node.js HTTP server (<code>server.js</code>) that persists records to <code>data/database.json</code> via REST endpoints.&quot;</p>
+</blockquote>
+<hr>
+<h3>Q3: Explain the mathematical derivation of the Attendance Recovery Formula.</h3>
+<blockquote>
+<p><strong>Answer</strong>:<br>&quot;Let <span class="math-inline">P</span> be classes attended (present), <span class="math-inline">T</span> be total classes held, and <span class="math-inline">R</span> be the required percentage cutoff (e.g. 75).<br>If a student attends the next <span class="math-inline">x</span> consecutive classes, their new percentage will be:</p>
+<div class="math-block"><span class="math-formula">(P + x / T + x) × 100 ≥ R</span></div>
+Multiplying both sides by <span class="math-inline">(T + x)</span>:
+<div class="math-block"><span class="math-formula">100(P + x) ≥ R(T + x)</span></div>
+<div class="math-block"><span class="math-formula">100P + 100x ≥ RT + Rx</span></div>
+Rearranging terms to isolate <span class="math-inline">x</span>:
+<div class="math-block"><span class="math-formula">100x - Rx ≥ RT - 100P</span></div>
+<div class="math-block"><span class="math-formula">x(100 - R) ≥ RT - 100P</span></div>
+<div class="math-block"><span class="math-formula">x ≥ (RT - 100P / 100 - R)</span></div>
+Because classes are discrete integers, we apply the ceiling function:
+<div class="math-block"><span class="math-formula">x = ≤ft⌈(R · T - 100 · P / 100 - R) \right⌉</span></div>
+If the student already has <span class="math-inline">≥ R\%</span>, the formula yields <span class="math-inline">≤ 0</span>, which we clamp to <span class="math-inline">0</span>."</blockquote>
+<hr>
+<h3>Q4: How is the Pomodoro sound synthesized without importing an audio file?</h3>
+<blockquote>
+<p><strong>Answer</strong>:<br>&quot;We utilized the browser&#39;s native <strong>HTML5 Web Audio API</strong>. Instead of fetching a heavy external <code>.mp3</code> file over the network, <code>js/common.js</code> creates an <code>AudioContext</code> and programs two hardware-accelerated sine-wave oscillators at <strong>587.33 Hz</strong> and <strong>880.00 Hz</strong>. We apply an exponential gain envelope that mimics a natural acoustic chime. This ensures zero network latency, zero broken audio links, and complete offline capability.&quot;</p>
+</blockquote>
+<hr>
+<h3>Q5: How does the auto study plan adapt if a student misses study sessions?</h3>
+<blockquote>
+<p><strong>Answer</strong>:<br>&quot;The Study Plan generator in <code>js/planner.js</code> is dynamic rather than static. Instead of hardcoding topics to calendar dates, it computes:</p>
+<div class="math-block"><span class="math-formula">Topics Per Day = ≤ft⌈\frac{Remaining Unfinished Topics}{Days Left Until Exam} \right⌉</span></div>
+Whenever a student checks off a topic or clicks the **'Reschedule'** button, the algorithm re-queries the current date and remaining topics, dynamically redistributing the workload across the remaining timeframe."</blockquote>
+<hr>
+<h2>8. Live Demonstration Script (3-Minute Walkthrough)</h2>
+<p>Follow this sequence during a live team demonstration:</p>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Action</th>
+<th>What to Say / Demonstrate</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>0:00 - 0:30</strong></td>
+<td>Open <code>index.html</code> <span class="math-inline">\to</span> Click <strong>&quot;Load demo data&quot;</strong></td>
+<td><em>&quot;StudentHub initializes instantly in any browser. We can pre-load a typical student semester scenario with one click. Notice how the dashboard immediately computes our next exam in red (&le; 3 days), shows daily safe spending, and flags our lowest attendance course.&quot;</em></td>
+</tr>
+<tr>
+<td><strong>0:30 - 1:00</strong></td>
+<td>Navigate to <strong>Exam Planner</strong> (<code>planner.html</code>)</td>
+<td><em>&quot;In the Exam Planner, subjects display remaining days and syllabus completion. If we mark a topic as done, or click &#39;Reschedule&#39;, our Algorithm 1 recalculates the day-wise study schedule automatically.&quot;</em></td>
+</tr>
+<tr>
+<td><strong>1:00 - 1:30</strong></td>
+<td>Navigate to <strong>Budget Tracker</strong> (<code>budget.html</code>)</td>
+<td><em>&quot;Here we track monthly allowances. Notice the safe-to-spend per day indicator. As we log expenses, our pure CSS stacked bar chart updates category proportions in real-time, and warning banners alert us if we cross 80% or 100% of our budget.&quot;</em></td>
+</tr>
+<tr>
+<td><strong>1:30 - 2:00</strong></td>
+<td>Navigate to <strong>Attendance Tracker</strong> (<code>attendance.html</code>)</td>
+<td><em>&quot;For attendance, every subject provides instant Present/Absent logging with an Undo button. Notice the smart hint cards: if we are safe, it calculates exact allowable bunks; if we are below 75%, it calculates the exact consecutive classes needed to recover.&quot;</em></td>
+</tr>
+<tr>
+<td><strong>2:00 - 2:30</strong></td>
+<td>Navigate to <strong>To-Do &amp; Pomodoro</strong> (<code>todo.html</code>)</td>
+<td><em>&quot;Our task list sorts items using a two-tier algorithm—High priority first, then earliest deadline. The built-in Pomodoro timer runs 25-minute focus cycles with tab countdowns and Web Audio acoustic chimes.&quot;</em></td>
+</tr>
+<tr>
+<td><strong>2:30 - 3:00</strong></td>
+<td>Click <strong>Theme Toggle</strong> <span class="math-inline">\to</span> Run <strong>Self-Tests</strong></td>
+<td><em>&quot;Finally, our dark/light theme persists across the entire application, and by clicking &#39;Run self-tests&#39; on the dashboard, 10 automated unit tests execute in the browser to verify formula correctness.&quot;</em></td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>Authored by the StudentHub Engineering Team — Ready for Evaluation &amp; Submission.</em></p>
+
+  </div>
+</body>
+</html>

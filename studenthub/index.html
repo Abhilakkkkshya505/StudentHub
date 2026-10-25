@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudentHub — Student Productivity Dashboard</title>
+  <meta name="description" content="All-in-one offline student productivity hub for college exams, budget, attendance, and tasks.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Sticky Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <span class="nav-logo-icon">🎓</span>
+        <span>StudentHub</span>
+      </a>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html" class="nav-link active">Dashboard</a></li>
+        <li><a href="planner.html" class="nav-link">Planner</a></li>
+        <li><a href="budget.html" class="nav-link">Budget</a></li>
+        <li><a href="attendance.html" class="nav-link">Attendance</a></li>
+        <li><a href="todo.html" class="nav-link">To-Do</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">🌙</button>
+        <button id="hamburgerBtn" class="hamburger-btn" aria-label="Toggle Menu" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="container">
+
+    <!-- Header Section -->
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <h1 class="page-title" id="dashboardGreeting">Good morning, Student 👋</h1>
+        <p class="page-subtitle" id="dashboardDate">Today's Date</p>
+      </div>
+      <div class="btn-group">
+        <button id="exportDataBtn" class="btn btn-secondary btn-sm" title="Download JSON backup of all StudentHub data">
+          <span>💾</span> Export data
+        </button>
+        <button id="importDataBtn" class="btn btn-secondary btn-sm" title="Restore data from a JSON backup file">
+          <span>📂</span> Import data
+        </button>
+        <input type="file" id="importFileInput" accept=".json" style="display: none;">
+        <button id="loadDemoBtn" class="btn btn-secondary btn-sm" title="Populate realistic Indian student sample data">
+          <span>✨</span> Load demo data
+        </button>
+        <button id="clearDataBtn" class="btn btn-danger btn-sm" title="Reset all module data">
+          <span>🗑️</span> Clear all data
+        </button>
+      </div>
+    </div>
+
+    <!-- Onboarding / Get Started Checklist (Ticks automatically as data is added) -->
+    <section class="card checklist-card" id="dashboardChecklistSection" aria-label="Get Started Checklist">
+      <div class="checklist-title">
+        <span>🚀 Get Started with StudentHub</span>
+        <span id="checklistProgressText" style="font-size: 0.85rem; color: var(--muted); font-weight: normal;">0 of 4 tasks completed</span>
+      </div>
+      <div class="progress" style="margin: 6px 0 12px 0;">
+        <div id="checklistProgressFill" class="progress-fill fill-success" style="width: 0%;"></div>
+      </div>
+      <div class="checklist-items">
+        <a href="planner.html" class="checklist-item" id="checkItemSubjects">
+          <span class="checklist-check" id="checkIconSubjects">⚪</span>
+          <span class="checklist-text">1. Add your enrolled subjects and upcoming exam dates</span>
+          <span style="font-size: 0.82rem; color: var(--primary);">Go to Planner &rarr;</span>
+        </a>
+        <a href="budget.html" class="checklist-item" id="checkItemBudget">
+          <span class="checklist-check" id="checkIconBudget">⚪</span>
+          <span class="checklist-text">2. Set your monthly allowance to calculate safe daily spending</span>
+          <span style="font-size: 0.82rem; color: var(--primary);">Go to Budget &rarr;</span>
+        </a>
+        <a href="attendance.html" class="checklist-item" id="checkItemAttendance">
+          <span class="checklist-check" id="checkIconAttendance">⚪</span>
+          <span class="checklist-text">3. Add your courses and set minimum required attendance cutoffs</span>
+          <span style="font-size: 0.82rem; color: var(--primary);">Go to Attendance &rarr;</span>
+        </a>
+        <a href="todo.html" class="checklist-item" id="checkItemTodo">
+          <span class="checklist-check" id="checkIconTodo">⚪</span>
+          <span class="checklist-text">4. Add your first study task or start a Pomodoro focus session</span>
+          <span style="font-size: 0.82rem; color: var(--primary);">Go to To-Do &rarr;</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Quick Overview Bar -->
+    <section class="card" style="margin-bottom: 24px;" aria-label="Quick Highlights">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 8px;">
+        <span style="font-weight: 600; font-size: 0.95rem;">Overall Exam Preparation</span>
+        <span id="dashPrepProgress" style="font-size: 0.88rem; color: var(--muted); font-weight: 500;">0% (0/0 topics completed)</span>
+      </div>
+      <div class="progress">
+        <div id="dashPrepFill" class="progress-fill fill-success" style="width: 0%;"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.88rem; color: var(--muted);">
+        <span>Pomodoro Focus Sessions Today:</span>
+        <strong id="dashPomodoroCount" style="color: var(--primary); font-size: 1.1rem;">0</strong>
+      </div>
+    </section>
+
+    <!-- 4 Main Summary Cards Grid -->
+    <section class="grid-cards" aria-label="Module Summaries">
+      <!-- 1. Next Exam Card -->
+      <article class="card" id="dashExamCard">
+        <div class="card-title"><span>📚 Next Exam</span></div>
+        <div class="empty-state">
+          <span class="empty-icon">📅</span>
+          <p class="empty-text">Loading exam data...</p>
+        </div>
+      </article>
+
+      <!-- 2. Budget Card -->
+      <article class="card" id="dashMoneyCard">
+        <div class="card-title"><span>💰 Money & Budget</span></div>
+        <div class="empty-state">
+          <span class="empty-icon">💳</span>
+          <p class="empty-text">Loading budget data...</p>
+        </div>
+      </article>
+
+      <!-- 3. Attendance Card -->
+      <article class="card" id="dashAttendanceCard">
+        <div class="card-title"><span>✅ Attendance</span></div>
+        <div class="empty-state">
+          <span class="empty-icon">📊</span>
+          <p class="empty-text">Loading attendance data...</p>
+        </div>
+      </article>
+
+      <!-- 4. Tasks Card -->
+      <article class="card" id="dashTasksCard">
+        <div class="card-title"><span>📝 Tasks & To-Do</span></div>
+        <div class="empty-state">
+          <span class="empty-icon">📌</span>
+          <p class="empty-text">Loading task data...</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- Collapsible "How StudentHub works" Section -->
+    <section aria-label="System Documentation">
+      <details class="how-it-works-details">
+        <summary class="how-it-works-summary">
+          <span>💡 How StudentHub works</span>
+        </summary>
+        <div class="how-it-works-content">
+          <p style="font-size: 0.9rem; color: var(--muted); margin-top: 12px;">
+            StudentHub is built with 100% offline, privacy-first technology. All your schedules, expenses, attendance, and tasks are stored locally in your browser via <code>localStorage</code>. No servers, no tracking, and zero internet connection required after opening.
+          </p>
+
+          <div class="how-it-works-grid">
+            <!-- Module 1 -->
+            <div class="formula-card">
+              <h4>📚 Exam Planner</h4>
+              <p>Distributes unfinished syllabus topics evenly across available calendar days before each exam.</p>
+              <code>topicsPerDay = ceil(unfinished / daysAvailable)</code>
+            </div>
+
+            <!-- Module 2 -->
+            <div class="formula-card">
+              <h4>💰 Budget Tracker</h4>
+              <p>Calculates daily expenditure capacity to ensure your monthly allowance lasts through the month.</p>
+              <code>safePerDay = floor(remaining / daysLeftInMonth)</code>
+            </div>
+
+            <!-- Module 3 (Skip) -->
+            <div class="formula-card">
+              <h4>✅ Attendance Safe Skips</h4>
+              <p>Computes how many consecutive classes you can safely miss without dropping below required cutoff.</p>
+              <code>bunkable = floor(present * 100 / required - total)</code>
+            </div>
+
+            <!-- Module 3 (Recovery) -->
+            <div class="formula-card">
+              <h4>🎯 Attendance Recovery</h4>
+              <p>Calculates minimum consecutive classes needed to raise attendance back above the cutoff.</p>
+              <code>needed = ceil((req * tot - 100 * pres) / (100 - req))</code>
+            </div>
+
+            <!-- Module 4 -->
+            <div class="formula-card">
+              <h4>📝 Task Priority Sorting</h4>
+              <p>Orders tasks in a two-tier hierarchy: High &gt; Medium &gt; Low priority, followed by earliest due date.</p>
+              <code>priorityWeight (3 &gt; 2 &gt; 1) then dueAsc</code>
+            </div>
+
+            <!-- Module 5 -->
+            <div class="formula-card">
+              <h4>⏱️ Pomodoro Timer</h4>
+              <p>Standardized 25m Focus / 5m Break cycle with browser Web Audio API chimes and daily counters.</p>
+              <code>step = floor(sec / 60) : (sec % 60)</code>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>Built by StudentHub Team | HTML, CSS, JavaScript</p>
+      <div class="footer-links">
+        <a href="javascript:void(0)" id="runTestsBtn" class="footer-link-action">Run self-tests (F12 console)</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts in required order -->
+  <script src="js/storage.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/tests.js"></script>
+</body>
+</html>

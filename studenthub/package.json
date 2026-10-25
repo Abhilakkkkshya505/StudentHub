@@ -1,0 +1,17 @@
+{
+  "name": "studenthub",
+  "version": "1.0.0",
+  "description": "StudentHub — All-in-one student productivity website with full working backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "studenthub",
+    "student-productivity",
+    "college-project"
+  ],
+  "author": "StudentHub Team",
+  "license": "ISC"
+}
